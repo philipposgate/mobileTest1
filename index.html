@@ -18,7 +18,7 @@
     var programSliderItem = $$({
         view : {
             format : '<div class="item">\
-                		<img src="/res/misc/deer.jpg" alt="" data-bind="height=height">\
+                		<img class="programImg" src="/res/misc/deer.jpg" alt="">\
                 		<div class="carousel-caption">\
 			           	 	   <div class="swProgramLine1" data-bind="startDay"></div>\
 			           	 	   <div class="swProgramLine2"><span data-bind="startTime12hr"></span> until <span data-bind="endTime12hr"></span></div>\
@@ -180,8 +180,10 @@
     }
     
     function resizeSlider() {
-        $(".carousel-inner").height($(window).height());
-        $(".carousel-inner").width($(window).width());
+//         $(".carousel-inner").height($(window).height());
+//         $(".carousel-inner").width($(window).width());
+        $(".programImg").height($(window).height());
+        $(".programImg").width($(window).width());
     }
 </script>
 </head>
