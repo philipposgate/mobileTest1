@@ -1,0 +1,60 @@
+
+
+ul.cfmu-footer-btns a:ACTIVE, ul.cfmu-footer-btns a:LINK, ul.cfmu-footer-btns a:HOVER, ul.cfmu-footer-btns a:VISITED {
+	background-color: transparent;
+}
+
+.homeContent {padding:0px;}
+
+#slider {background:#414141;}
+.swipe {
+  overflow: hidden;
+  visibility: hidden;
+  position: relative;
+}
+.swipe-wrap {
+  overflow: hidden;
+  position: relative;
+  width:100%;
+  height:100%;
+}
+.swipe-wrap > div {
+  float:left;
+  width:100%;
+  height:100%;
+  position: relative;
+  margin:0px;
+  padding:0px;
+/*   transform: translate3d(0,0,0); */
+}
+
+.swProgramContainer {
+	position: absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	border-radius:3px;
+	text-shadow:none;
+	color:#FFF;
+	font-size:20px;
+	margin:10px;
+	padding:10px;
+ 	background: rgba(0, 0, 0, 0.5) none; 
+	text-shadow: 2px 2px 2px #000;
+/* 	background-image:url('./res/misc/shelby.jpg'); */
+	background-repeat:no-repeat;
+	background-position: center center;
+	background-attachment:fixed;
+	background-size: cover;
+	overflow:hidden;}
+	
+.swProgramLine1 {font-weight:bold;font-size:30px;}
+.swProgramLine2 {}
+.swProgramLine3 {font-weight:bold;font-size:25px;margin-top:20px;}
+.swProgramLine4 {margin-bottom:20px;color:#eee;text-transform:uppercase;font-size:15px;}
+.swProgramLine5 {color:#e9e9e9;}
+
+.schedListGroup {font-size:20px;}
+.schedListProgramName {font-weight:bold;font-size:20px;}
+.schedListProgramTime {}

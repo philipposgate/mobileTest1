@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+<title>CFMU 93.3</title>
+<link rel="stylesheet" href="lib/fa/fontawesome.css" />
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-2.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="index.css" />
+<script type="text/javascript" src="phonegap.js"></script>
+<script type="text/javascript" src="lib/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="lib/agility-0.1.3/agility.min.js"></script>
+<script type="text/javascript" src="lib/bootstrap-2.3.1/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    // AGILITY PROTOTYPE: swipeable "program page" in "homePage"
+    var programSliderItem = $$({
+        view : {
+            format : '<div class="item">\
+                		<img src="/res/misc/deer.jpg" alt="">\
+                		<div class="carousel-caption">\
+			           	 	   <div class="swProgramLine1" data-bind="startDay"></div>\
+			           	 	   <div class="swProgramLine2"><span data-bind="startTime12hr"></span> until <span data-bind="endTime12hr"></span></div>\
+			           	 	   <div class="swProgramLine3" data-bind="name"></div>\
+			           	 	   <div class="swProgramLine4" data-bind="genre"></div>\
+			           	 	   <div class="swProgramLine5" data-bind="description"></div>\
+			           	</div>\
+			      	  </div>'
+        }
+    });
+    
+	var sliderIndicator = $$({
+	    view: {
+	        format: '<li data-target="#myCarousel" data-bind="data-slide-to=position"></li>'
+	    }
+	});
+
+    // AGILITY PROTOTYPE: "program item" for "schedList" in "schedulePage"
+    var schedListItem = $$({
+        view : {
+            format : '<li>\
+			      		   	  <a>\
+			      		   		 <p class="schedListProgramTime" class="ui-li-aside"><span data-bind="startTime12hr"></span> until <span data-bind="endTime12hr"></span></p>\
+			      		   		 <p class="schedListProgramName" data-bind="name"></p>\
+			      		   	  </a>\
+			      		   </li>'
+        }
+    });
+
+    // AGILITY PROTOTYPE: "group item" for "schedList" in "schedulePage"
+    var schedListGroupItem = $$({
+        view : {
+            format : '<li class="schedListGroup" data-role="list-divider" data-bind="startDay"></li>'
+        }
+    });
+
+    $(document).ready(function() {
+
+        window.isphone = false;
+        if (document.URL.indexOf("http://") == -1) {
+            window.isphone = true;
+        }
+
+        if (window.isphone) {
+            document.addEventListener("deviceready", initializeApp, false);
+        } else {
+            initializeApp();
+        }
+    });
+
+    function initializeApp() {
+        $(window).bind("orientationchange pageshow", fixgeometry);
+
+        $(".volumeBtn").click(function() {
+            if ($(this).data("icon") == "volume-up") {
+                pauseAudio();
+            } else {
+                playAudio();
+            }
+        });
+
+        //this.playAudio();
+        $("#playBtn").click();
+
+        loadCFMUData(initializeAppData);
+    }
+
+    function initializeAppData(data) {
+        // massage program data...
+        for ( var i = 0; i < data.programs.length; i++) {
+            data.programs[i].position = i;
+            data.programs[i].startTime12hr = formatAs12hr(data.programs[i].startTime);
+            data.programs[i].endTime12hr = formatAs12hr(data.programs[i].endTime);
+            data.programs[i].fullUrl = "http://cfmu.msumcmaster.ca"
+                    + data.programs[i].url;
+        }
+
+        // setup sliderPrograms...
+        for ( var i = 0; i < data.programs.length; i++) {
+            var programIndicator = $$(sliderIndicator, data.programs[i]);
+            var programItem = $$(programSliderItem, data.programs[i]);
+            $$.document.append(programIndicator, "#myCarouselIndicators");
+            $$.document.append(programItem, "#myCarouselItems");
+        }
+        $("#myCarousel").carousel();
+
+
+    }
+
+    function loadCFMUData(callback) {
+        $.post("http://cfmu.msumcmaster.ca/app/cfmuData", {}, function(data,
+                status, xhr) {
+            if ("success" == status) {
+                if (callback) {
+                    callback(data);
+                }
+            }
+        }, "json");
+    }
+
+    function loadNowOnAir(callback) {
+        $.post("http://cfmu.msumcmaster.ca/app/nowOnAir", {}, function(data,
+                status, xhr) {
+            if ("success" == status) {
+                if (callback) {
+                    callback(data);
+                }
+            }
+        }, "json");
+    }
+
+    function fixgeometry(e) {
+        // console.log(e.type);
+        /* Some orientation changes leave the scroll position at something
+         * that isn't 0,0. This is annoying for user experience. */
+        scroll(0, 0);
+
+        /* Calculate the geometry that our content area should take */
+        var header = $(".header:visible");
+        var footer = $(".footer:visible");
+        var content = $(".content:visible");
+        var viewport_height = $(window).height();
+
+        var content_height = viewport_height - header.outerHeight()
+                - footer.outerHeight();
+
+        /* Trim margin/border/padding height */
+        content_height -= (content.outerHeight() - content.height());
+        content.height(content_height);
+
+        $("#myCarousel").height(content_height);
+    };
+
+    function playAudio() {
+        $("#audioStream").get(0).play();
+        $(".volumeBtn").data("icon", "volume-up");
+        $(".volumeBtn").find(".ui-icon").addClass("ui-icon-volume-up")
+                .removeClass("ui-icon-volume-off");
+    }
+
+    function pauseAudio() {
+        $("#audioStream").get(0).pause();
+        $(".volumeBtn").data("icon", "volume-off");
+        $(".volumeBtn").find(".ui-icon").addClass("ui-icon-volume-off")
+                .removeClass("ui-icon-volume-up");
+    }
+
+    function formatAs12hr(fourDigitTime) {
+        var hours24 = parseInt(fourDigitTime.substring(0, 2));
+        var hours = ((hours24 + 11) % 12) + 1;
+        var amPm = hours24 > 11 ? 'pm' : 'am';
+        var minutes = fourDigitTime.substring(2);
+
+        return hours + ':' + minutes + amPm;
+    }
+</script>
+</head>
+<body>
+	<audio id="audioStream">
+		<source src="http://cfmu.wwworks-inc.com:8000/;" type="audio/mpeg"> <!-- CFMU ShoutCast URL -->
+		
+	</audio>
+
+	<div id="myCarousel" class="carousel slide">
+		<ol id="myCarouselIndicators" class="carousel-indicators">
+		</ol>
+		<div id="myCarouselItems" class="carousel-inner">
+		</div>
+		<a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a> 
+		<a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+	</div>
+</body>
+</html>
