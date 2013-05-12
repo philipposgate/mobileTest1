@@ -1,3 +1,4 @@
+.carousel-inner { overflow:hidden; position:relative; } 
 
 
 ul.cfmu-footer-btns a:ACTIVE, ul.cfmu-footer-btns a:LINK, ul.cfmu-footer-btns a:HOVER, ul.cfmu-footer-btns a:VISITED {
